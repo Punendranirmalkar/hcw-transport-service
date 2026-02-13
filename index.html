@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hirmi Enterprise - Punendra Nirmalkar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        :root { --primary: #2563eb; --success: #059669; --warning: #f59e0b; --danger: #ef4444; --bg: #f8fafc; --text: #1e293b; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 80px; }
+        .navbar { background: white; color: var(--primary); padding: 15px; text-align: center; font-weight: 700; border-bottom: 2px solid #e2e8f0; position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; }
+        .container { max-width: 500px; margin: auto; padding: 15px; }
+        .card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 20px; border: 1px solid #f1f5f9; }
+        .hidden { display: none !important; }
+        
+        label { font-size: 11px; font-weight: 700; color: #475569; margin: 12px 0 4px; display: block; text-transform: uppercase; }
+        input, select { width: 100%; padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; box-sizing: border-box; background: #fcfcfd; margin-bottom: 5px; }
+        
+        .btn { border: none; padding: 14px; border-radius: 12px; font-weight: 600; cursor: pointer; width: 100%; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; margin-bottom: 10px; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-success { background: var(--success); color: white; margin-bottom: 20px; }
+        .btn-wa { background: #25D366; color: white; border: 2px solid #128C7E; }
+        .btn-sms { background: #000; color: white; }
+        .btn-back { background: #f1f5f9; color: #64748b; width: auto; padding: 8px 15px; font-size: 12px; }
+        .btn-del { background: #fee2e2; color: var(--danger); padding: 8px; border-radius: 8px; width: auto; font-size: 12px; }
+
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .stat-card { background: white; padding: 15px; border-radius: 16px; text-align: center; border: 1px solid #e2e8f0; }
+        .list-item { background: white; padding: 16px; border-radius: 16px; margin-bottom: 12px; border-left: 5px solid var(--primary); display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        
+        .footer-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 10px; border-top: 1px solid #e2e8f0; }
+        .nav-item { border: none; background: none; font-size: 11px; color: #94a3b8; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
+        .nav-item.active { color: var(--primary); font-weight: 700; }
+        .branding { text-align: center; font-size: 10px; color: #94a3b8; padding: 10px 0; }
+        
+        #preview-box { background: #e5ddd5; padding: 15px; border-radius: 10px; font-size: 13px; white-space: pre-wrap; margin-bottom: 15px; border-left: 4px solid #128C7E; font-family: sans-serif; }
+    </style>
+</head>
+<body>
+
+<div id="view-login" class="container" style="margin-top: 50px;">
+    <div class="card" style="text-align: center;">
+        <h2 style="color:var(--primary)">HIRMI PORTAL</h2>
+        <input type="text" id="user" placeholder="Username">
+        <input type="password" id="pass" placeholder="Password">
+        <button onclick="login()" class="btn btn-primary" style="margin-top: 15px;">LOGIN</button>
+        <p class="branding">Created by Punendra Nirmalkar</p>
+    </div>
+</div>
+
+<div id="app" class="hidden">
+    <div class="navbar">
+        <button class="btn btn-back" onclick="goBack()">← Back</button>
+        <span>HCW TRANSPORT SERVICE </span>
+        <button onclick="logout()" style="border:none; background:none; color:red; font-size:12px; font-weight:bold;">Logout</button>
+    </div>
+
+    <div class="container">
+        <div id="view-form">
+            <div class="stats-grid">
+                <div class="stat-card"><b><span id="stat-active">0</span></b><br><small>Total Logs</small></div>
+                <div class="stat-card"><b><span id="cur-time">00:00</span></b><br><small>Current Time</small></div>
+            </div>
+            <div class="card">
+                <h3 style="margin-top:0; font-size:16px;">New Deployment</h3>
+                <div style="display:flex; gap:10px;">
+                    <div style="flex:1"><label>Date</label><input type="date" id="fDate"></div>
+                    <div style="flex:1"><label>Time</label><input type="time" id="fTime"></div>
+                </div>
+                <label>Vehicle</label>
+                <select id="fVeh" onchange="checkOther('fVeh', 'boxVeh')">
+                    <option>Innova - CG 04MB 5040</option>
+                    <option>MG(EV) - CG 04PT 5070</option>
+                    <option>Scrpio - CG 22T 7700</option>
+                    <option>XUV - CG 04NU 4400</option>
+                    <option value="other">-- Other Vehicle --</option>
+                </select>
+                <input id="boxVeh" class="hidden custom-input" placeholder="Enter Vehicle Details">
+
+                <label>Driver</label>
+                <select id="fDrv" onchange="checkOther('fDrv', 'boxDrv')">
+                    <option value="Mahendra Sahu|6261846931">Mahendra Sahu</option>
+                    <option value="Basant matre|9826970336">Basant matre</option>
+                    <option value="Yuvraj verma|9165815841">Yuvraj verma</option>
+                    <option value="Jitu sahu|8120036121">Jitu sahu</option>
+                    <option value="Raju banjare|9009142839">Raju banjare</option>
+                    <option value="Sanjay Yadav|9754250067">Sanjay Yadav</option>
+                    <option value="khilendra banjare|99778032">khilendra banjare</option>
+                    <option value="Bodhan verma|8120679684">Bodhan verma</option>
+                    <option value="Manoj vaishnav|7582040053">Manoj vaishnav</option>
+                    <option value="other">-- Other Driver --</option>
+                </select>
+                <div id="boxDrv" class="hidden">
+                    <input id="customDrvName" placeholder="Driver Name">
+                    <input id="customDrvMob" placeholder="Driver Number">
+                </div>
+
+                <label>Guest Details</label>
+                <input id="fGst" placeholder="Guest Name">
+                <input id="fMob" placeholder="Guest Mobile Number">
+                <div style="display:flex; gap:10px; margin-top:10px;">
+                    <input id="fPick" placeholder="Pickup" style="flex:1">
+                    <input id="fDrop" placeholder="Drop" style="flex:1">
+                </div>
+                <button onclick="save()" class="btn btn-primary" style="margin-top:20px;">CREATE & SHARE</button>
+            </div>
+        </div>
+
+        <div id="view-list" class="hidden">
+            <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h3 style="font-size:16px;">Logbook History</h3>
+                <button onclick="exportExcel()" class="btn btn-success" style="width:auto; padding:8px 15px; font-size:12px;">📊 Excel Download</button>
+            </div>
+            <div id="listBody"></div>
+        </div>
+
+        <div id="view-det" class="hidden">
+            <div class="card">
+                <h3>Share Details</h3>
+                <div id="preview-box"></div>
+                <div id="share-buttons"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-nav">
+        <button class="nav-item active" id="btn-form" onclick="tab('form')">🏠<br>New</button>
+        <button class="nav-item" id="btn-list" onclick="tab('list')">📊<br>Logs</button>
+    </div>
+</div>
+
+<script>
+   const DB = 'HIRMI_PRO_V5';
+let currentView = 'form';
+let historyStack = [];
+    function convertTo12Hour(time24) {
+    if (!time24) return "";
+
+    let parts = time24.split(":");
+    let hour = parseInt(parts[0]);
+    let minute = parts[1];
+
+    let ampm = hour >= 12 ? "PM" : "AM";
+    hour = hour % 12;
+    hour = hour ? hour : 12;
+
+    return hour + ":" + minute + " " + ampm;
+}
+    function login() {
+        const u = document.getElementById('user').value;
+        const p = document.getElementById('pass').value;
+        if(u === 'Admin' && p === 'hirmi@1234') {
+            document.getElementById('view-login').classList.add('hidden');
+            document.getElementById('app').classList.remove('hidden');
+            updateStats();
+        } else { alert("Wrong Credentials!"); }
+    }
+
+    function logout() { if(confirm("Logout?")) location.reload(); }
+
+    function tab(t) {
+        if(currentView !== t) historyStack.push(currentView);
+        currentView = t;
+        document.getElementById('view-form').classList.add('hidden');
+        document.getElementById('view-list').classList.add('hidden');
+        document.getElementById('view-det').classList.add('hidden');
+        document.getElementById('btn-form').classList.remove('active');
+        document.getElementById('btn-list').classList.remove('active');
+
+        if(t==='form') { document.getElementById('view-form').classList.remove('hidden'); document.getElementById('btn-form').classList.add('active'); }
+        if(t==='list') { document.getElementById('view-list').classList.remove('hidden'); document.getElementById('btn-list').classList.add('active'); render(); }
+        if(t==='det') { document.getElementById('view-det').classList.remove('hidden'); }
+    }
+
+    function goBack() { if(historyStack.length > 0) { let prev = historyStack.pop(); tab(prev); historyStack.pop(); } }
+
+    function checkOther(selId, boxId) { document.getElementById(boxId).classList.toggle('hidden', document.getElementById(selId).value !== 'other'); }
+
+    function save() {
+        if(!document.getElementById('fGst').value) return alert("Fill Guest Name");
+        let veh = document.getElementById('fVeh').value === 'other' ? document.getElementById('boxVeh').value : document.getElementById('fVeh').value;
+        let dN, dM;
+        if(document.getElementById('fDrv').value === 'other') {
+            dN = document.getElementById('customDrvName').value; dM = document.getElementById('customDrvMob').value;
+        } else {
+            let p = document.getElementById('fDrv').value.split('|'); dN = p[0]; dM = p[1];
+        }
+
+        let entry = { id: Date.now(), date: document.getElementById('fDate').value, time: document.getElementById('fTime').value, veh: veh, gst: document.getElementById('fGst').value, mob: document.getElementById('fMob').value, pk: document.getElementById('fPick').value, dp: document.getElementById('fDrop').value, dN: dN, dM: dM };
+        let data = JSON.parse(localStorage.getItem(DB) || "[]");
+        data.push(entry);
+        localStorage.setItem(DB, JSON.stringify(data));
+        updateStats();
+        preview(entry.id);
+    }
+
+    function deleteEntry(id) {
+    if(confirm("Are you sure you want to delete this log?")) {
+        let data = JSON.parse(localStorage.getItem(DB) || "[]");
+        data = data.filter(item => item.id !== id);
+        localStorage.setItem(DB, JSON.stringify(data));
+        render();
+        updateStats();
+    }
+}
+
+    function render() {
+    let data = JSON.parse(localStorage.getItem(DB) || "[]").reverse();
+
+    document.getElementById('listBody').innerHTML = data.map(i => `
+        <div class="list-item">
+            <div onclick="preview(${i.id})" style="flex:1">
+                <b>${i.gst}</b><br>
+                <small>${i.date} | ${i.veh}</small>
+            </div>
+            <button class="btn-del" onclick="deleteEntry(${i.id})">
+                Delete
+            </button>
+        </div>
+    `).join('') || "No logs found.";
+}
+
+    function preview(id) {
+
+    let data = JSON.parse(localStorage.getItem(DB));
+    let i = data.find(x => x.id === id);
+
+    let msg = "*Welcome to ultratech cement limited Hirmi*\n" +
+"Transport vehicle deployment details\n\n" +
+"Vehicle no *" + i.veh + "*\n" +
+"*Driver:* " + i.dN + " (" + i.dM + ")\n" +
+"Guest - " + i.gst + "\n" +
+"*Pickup:* " + i.pk + "\n" +
+"*Drop:* " + i.dp + "\n" +
+"Assigned for *" + i.date + "* Time *" + convertTo12Hour(i.time) + "*.\n\n" +
+"Kindly fasten your seat belt for safe journey.\n" +
+"\"Wish you a very happy journey\"\n\n" +
+"Regards,\n*Hirmi Cement Works*";
+
+    let driverMsg = "*HCW Driver Assignment*\n\n" +
+    "Guest Name: " + i.gst + "\n" +
+    "Guest Mobile: " + i.mob + "\n" +
+    "Pickup: " + i.pk + "\n" +
+    "Drop: " + i.dp + "\n" +
+    "Date: " + i.date + "\n" +
+    "Time: " + convertTo12Hour(i.time) + "\n\n" +
+    "Department – Administration";
+
+    document.getElementById("preview-box").innerText = msg;
+
+    document.getElementById("share-buttons").innerHTML =
+        '<a href="https://wa.me/91' + i.mob + '?text=' + encodeURIComponent(msg) + '" class="btn btn-wa" target="_blank">SEND WHATSAPP</a>' +
+
+        '<a href="https://wa.me/91' + i.dM + '?text=' + encodeURIComponent(driverMsg) + '" class="btn btn-wa" target="_blank">SEND TO DRIVER</a>' +
+
+        '<a href="sms:+91' + i.mob + '?body=' + encodeURIComponent(msg.replace(/\\*/g,"")) + '" class="btn btn-sms">SEND SMS</a>';
+
+    tab("det");
+}
+
+    function exportExcel() {
+        let data = JSON.parse(localStorage.getItem(DB) || "[]");
+        if(data.length === 0) return alert("No data to export!");
+        
+        // Data format for Excel
+        let excelData = data.map(i => ({
+            "Date": i.date, "Time": i.time, "Guest Name": i.gst, "Mobile": i.mob,
+            "Vehicle": i.veh, "Driver": i.dN, "Driver Mob": i.dM, "Pickup": i.pk, "Drop": i.dp
+        }));
+
+        const ws = XLSX.utils.json_to_sheet(excelData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Logs");
+        XLSX.writeFile(wb, `Hirmi_Logs_${new Date().toLocaleDateString()}.xlsx`);
+    }
+
+    function updateStats() {
+        let data = JSON.parse(localStorage.getItem(DB) || "[]");
+        document.getElementById('stat-active').innerText = data.length;
+        document.getElementById('cur-time').innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    }
+
+    window.onload = () => { document.getElementById('fDate').valueAsDate = new Date(); setInterval(updateStats, 60000); };
+</script>
+</body>
+</html>
