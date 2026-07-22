@@ -72,8 +72,9 @@
                 <select id="fVeh" onchange="checkOther('fVeh', 'boxVeh')">
                     <option>Innova - CG 04MB 5040</option>
                     <option>MG(EV) - CG 04PT 5070</option>
-                    <option>Scrpio - CG 22T 7700</option>
+                    <option>Scorpio - CG 22T 7700</option>
                     <option>XUV - CG 04NU 4400</option>
+                    <option>Scorpio - CG 04NU 3300</option>
                     <option value="other">-- Other Vehicle --</option>
                 </select>
                 <input id="boxVeh" class="hidden custom-input" placeholder="Enter Vehicle Details">
@@ -86,9 +87,10 @@
                     <option value="Jitu sahu|8120036121">Jitu sahu</option>
                     <option value="Raju banjare|9009142839">Raju banjare</option>
                     <option value="Sanjay Yadav|9754250067">Sanjay Yadav</option>
-                    <option value="khilendra banjare|99778032">khilendra banjare</option>
+                    <option value="khilendra banjare|9977803254">khilendra banjare</option>
                     <option value="Bodhan verma|8120679684">Bodhan verma</option>
                     <option value="Manoj vaishnav|7582040053">Manoj vaishnav</option>
+                    <option value="Dagesh Sahu|8461995727">Dagesh Sahu</option>
                     <option value="other">-- Other Driver --</option>
                 </select>
                 <div id="boxDrv" class="hidden">
@@ -228,9 +230,9 @@ let historyStack = [];
 
     let msg = "*Welcome to ultratech cement limited Hirmi*\n" +
 "Transport vehicle deployment details\n\n" +
+"Guest - " + i.gst + "\n" +
 "Vehicle no *" + i.veh + "*\n" +
 "*Driver:* " + i.dN + " (" + i.dM + ")\n" +
-"Guest - " + i.gst + "\n" +
 "*Pickup:* " + i.pk + "\n" +
 "*Drop:* " + i.dp + "\n" +
 "Assigned for *" + i.date + "* Time *" + convertTo12Hour(i.time) + "*.\n\n" +
