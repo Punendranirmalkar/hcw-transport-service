@@ -228,14 +228,14 @@ let historyStack = [];
     let data = JSON.parse(localStorage.getItem(DB));
     let i = data.find(x => x.id === id);
 
-    let msg = "*Welcome to ultratech cement limited Hirmi*\n" +
-"Transport vehicle deployment details\n\n" +
+    let msg = "*Welcome to UltraTech Cement Limited Hirmi cement works*\n" +
+"*Respected sir*\n\n" +
 "Guest - " + i.gst + "\n" +
+"*Pickup:* " + i.pk + "\n" +     
+"*Drop:* " + i.dp + "\n" +       
+"Assigned for *" + i.date + "* Time *" + convertTo12Hour(i.time) + "*.\n\n" +
 "*Driver:* " + i.dN + " (" + i.dM + ")\n" +
 "Vehicle no *" + i.veh + "*\n" +
-"*Pickup:* " + i.pk + "\n" +
-"*Drop:* " + i.dp + "\n" +
-"Assigned for *" + i.date + "* Time *" + convertTo12Hour(i.time) + "*.\n\n" +
 "Kindly fasten your seat belt for safe journey.\n" +
 "\"Wish you a very happy journey\"\n\n" +
 "Regards,\n*Hirmi Cement Works*";
